@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Record Score</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- JQuery -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/js/mdb.min.js"></script>
+  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+  
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
+  
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
+
+</head>
+<body>
+{% if schedule %}
+
+<div class="container">
+  <p class="h4 mb-4 text-center">Enter Score for Whakatane Ladder Competition</p>
+  <form class="border border-light p-5" method="post" action="record_score_backend">
+    {% csrf_token %}
+  <table id="table-id" class="table table-striped nowrap" style="width:100%">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Time</th>
+          <th scope="col">Class</th>
+          <th scope="col">Player1 Rank</th>
+          <th scope="col">Player1 Name</th>
+          <th scope="col">Player1 Score</th>
+          <th scope="col">Player2 Score</th>
+          <th scope="col">Player2 Name</th>
+          <th scope="col">Player2 Rank</th>
+          <th scope="col">&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for match in schedule %}
+          <tr>
+              <td scope="col">{{match.date}}</td>
+              {% if "{{match.time_break}}" == "True" %}
+                <td scope="col"  style="background-color:lightcoral;">{{match.time}}</td>
+              {% else %}
+                <td scope="col" style="background-color:lightgreen;">{{match.time}}</td>
+              <td scope="col">{{match.class}}</td>
+              <td scope="col">{{match.player1_rank}}</td>
+              <td scope="col">{{match.player1_name}}</td>
+              <td scope="col"><input id="p1_{{match.id}}" name="p1_{{match.id}}" size="2" value="{{match.player1_score}}"></td>
+              <td scope="col"><input id="p2_{{match.id}}" name="p2_{{match.id}}" size="2" value="{{match.player2_score}}"></td>
+              <td scope="col">{{match.player2_name}}</td>
+              <td scope="col">{{match.player2_rank}}</td>
+              <td scope="col">
+                    <button type="button" data-toggle="tooltip" data-placement="top" title="Edit Match" class="btn btn-info btn-sm" onclick="window.location='edit_match_enter_score?id={{match.id}}'"><i class="fas fa-edit"></i>
+                    </button>
+                  <button type="button" data-toggle="tooltip" data-placement="top" title="Delete Match" class="btn btn-danger btn-sm" onclick="window.location='delete_match_enter_score?id={{match.id}}'"><i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+              {% endif %}
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+
+    <input type="hidden" id="date" name="date" value="{{date}}"/>
+      
+    <button class="btn btn-info btn-block my-l" type="submit">Record Score</button>
+
+    </form>
+   
+  </div>
+
+  {% else %} 
+  
+  <p class="h3 mb-4 text-center">No schedule created and save as final!!!</p>
+    
+
+{% endif %}
+</body>
+<script>
+ $(document).ready( function () {
+    var table_data = $('#table-id').DataTable({
+      responsive:true,
+      "order": [[ 0, "desc" ], [ 1, "asc" ]],
+    });
+} );
+
+</script>
+</html>
+   
